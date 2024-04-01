@@ -5,12 +5,14 @@ from Fortuna import random_int, random_float
 from MonsterLab import Monster
 from flask import Flask, render_template, request
 from pandas import DataFrame
+from datetime import datetime
 
 from app.data import Database
+from app.data import MongoDB
 from app.graph import chart
 from app.machine import Machine
 
-SPRINT = 0
+SPRINT = 1
 APP = Flask(__name__)
 
 
@@ -28,7 +30,10 @@ def home():
 def data():
     if SPRINT < 1:
         return render_template("data.html")
-    db = Database()
+    # for personal reasons
+    collection_name = "Collection_" + datetime.now().strftime("%Y%m%d%H%M%S")
+    db = Database(collection_name)
+    # db = MongoDB(collection_name)
     return render_template(
         "data.html",
         count=db.count(),
