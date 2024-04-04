@@ -1,14 +1,12 @@
 from base64 import b64decode
 import os
 
-from Fortuna import random_int, random_float
 from MonsterLab import Monster
 from flask import Flask, render_template, request
 from pandas import DataFrame
 from datetime import datetime
 
-from app.data import Database
-from app.data import MongoDB
+from app.data2 import Database
 from app.graph import chart
 from app.machine import Machine
 
@@ -31,9 +29,8 @@ def data():
     if SPRINT < 1:
         return render_template("data.html")
     # for personal reasons
-    collection_name = "Collection_" + datetime.now().strftime("%Y%m%d%H%M%S")
-    db = Database(collection_name)
-    # db = MongoDB(collection_name)
+    # collection_name = "Collection_" + datetime.now().strftime("%Y%m%d%H%M%S")
+    db = Database()
     return render_template(
         "data.html",
         count=db.count(),
