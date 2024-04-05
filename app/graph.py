@@ -13,6 +13,8 @@ df = db.dataframe()
 
 def chart(df, x, y, target):
     fig = px.box(df, x=x, y=y, title=target)
+    fig.update_layout(template='plotly_dark',
+                      autosize=True)
     return fig
 
 
