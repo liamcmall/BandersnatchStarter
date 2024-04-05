@@ -132,7 +132,9 @@ class Database:
             general_probability = ASSIGNED_GENERAL_PROBABILITIES[general_index]
 
             success_percentage = round(sum([clone_type_probability, rank_probability, 
-                                            general_probability, math.log10(health)-0.80]), 2)
+                                            general_probability]), 2)
+            if success_percentage >= 1.0:
+                success_percentage = 0.99
 
             check_in_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             data.append((clone_type, rank, assigned_weapon, health, energy, 
