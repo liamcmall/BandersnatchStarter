@@ -10,7 +10,7 @@ import plotly.express as px
 import plotly.io as pio
 
 # Local application imports
-from app.data2 import Database
+from data2 import Database
 
 # Create database instance and dataframe
 db = Database()
