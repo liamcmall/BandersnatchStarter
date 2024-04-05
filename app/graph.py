@@ -4,7 +4,7 @@ import math
 import random
 from datetime import datetime
 import plotly.express as px
-from data2 import Database
+from app.data2 import Database
 import plotly.io as pio
 import unittest
 
