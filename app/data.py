@@ -38,7 +38,7 @@ assigned_weapons = ["DC-15A Blaster Rifle",
                    "DC-15S Blaster Carbine",
                    "WESTAR-M5 Blaster Rifle"]
 
-assigned_general = ['General Mace Windu', "General Plo Koon", 'General Yoda', 'General Kenobi', 'General Skywalker',]
+assigned_generals = ['General Mace Windu', "General Plo Koon", 'General Yoda', 'General Kenobi', 'General Skywalker',]
 assigned_general_probabilities = [round(random.uniform(0.0,0.1),2),
                                   round(random.uniform(0.1,0.15),2),
                                   round(random.uniform(0.2,0.25),2),
@@ -98,8 +98,8 @@ class Database:
             energy = random.randint(2, 6)
 
             # Select a general and its probability
-            general_index = random.choices(range(len(assigned_general)), assigned_general_probabilities, k=1)[0]
-            general = assigned_general[general_index]
+            general_index = random.choices(range(len(assigned_generals)), assigned_general_probabilities, k=1)[0]
+            general = assigned_generals[general_index]
             general_probability = assigned_general_probabilities[general_index]
 
             # Calculated the success percentage. But also included a skew towards healthier clones.
