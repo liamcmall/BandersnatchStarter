@@ -15,19 +15,17 @@ from typing import Dict, Iterable, Iterator, List, Tuple
 
 # List and Etc.
 
-ranks = ['Private', 'Sergeant', 'Lieutenant', 'Captain', 'Commander']
-rank_probabilities = [round(random.uniform(0.0,0.1),2),
-                      round(random.uniform(0.1,0.15),2),
+ranks = ['Private', 'Lieutenant', 'Captain', 'Commander']
+rank_probabilities = [round(random.uniform(0.0,0.2),2),
                       round(random.uniform(0.2,0.25),2),
                       round(random.uniform(0.25,0.3),2),
-                      round(random.uniform(0.3,0.35),2)]
+                      round(random.uniform(0.3,0.37),2)]
 
-clone_types = ['Standard','Recon', 'Heavy', 'Commando', 'ARC Trooper']
-clone_type_probabilities = [round(random.uniform(0.0,0.1),2),
-                            round(random.uniform(0.1,0.15),2),
-                            round(random.uniform(0.2,0.25),2),
-                            round(random.uniform(0.25,0.3),2),
-                            round(random.uniform(0.3,0.35),2)]
+clone_types = ['Standard', 'Heavy', 'Commando', 'ARC Trooper']
+clone_type_probabilities = [round(random.uniform(0.0,0.2),2),
+                      round(random.uniform(0.2,0.25),2),
+                      round(random.uniform(0.25,0.3),2),
+                      round(random.uniform(0.3,0.37),2)]
 
 assigned_weapons = ["DC-15A Blaster Rifle",
                    "DC-15X Sniper Rifle",
@@ -35,12 +33,11 @@ assigned_weapons = ["DC-15A Blaster Rifle",
                    "DC-15S Blaster Carbine",
                    "WESTAR-M5 Blaster Rifle"]
 
-assigned_generals = ['General Mace Windu', "General Plo Koon", 'General Yoda', 'General Kenobi', 'General Skywalker',]
-assigned_general_probabilities = [round(random.uniform(0.0,0.1),2),
-                                  round(random.uniform(0.1,0.15),2),
+assigned_generals = ['General Mace Windu', 'General Yoda', 'General Kenobi', 'General Skywalker',]
+assigned_general_probabilities = [round(random.uniform(0.0,0.2),2),
                                   round(random.uniform(0.2,0.25),2),
                                   round(random.uniform(0.25,0.3),2),
-                                  round(random.uniform(0.3,0.35),2)]
+                                  round(random.uniform(0.3,0.37),2)]
 
 
 class Database:
@@ -101,18 +98,36 @@ class Database:
 
     # Generate a random clone trooper!
     @staticmethod
-    def generate_clone_trooper(n: int) -> List[Tuple]:
+    def generate_clone_trooper(n):
         data = []
         for _ in range(n):
-            clone_type = random.choices(clone_types, clone_type_probabilities)[0]
-            rank = random.choices(ranks, rank_probabilities)[0]
+
+            # Select a clone type and its probability
+            clone_type_index = random.choices(range(len(clone_types)), clone_type_probabilities, k=1)[0]
+            clone_type = clone_types[clone_type_index]
+            clone_type_probability = clone_type_probabilities[clone_type_index]
+
+            # Select a rank and its probability
+            rank_index = random.choices(range(len(ranks)), rank_probabilities, k=1)[0]
+            rank = ranks[rank_index]
+            rank_probability = rank_probabilities[rank_index]
+
+            # Weapon Selected
             assigned_weapon = random.choice(assigned_weapons)
+
+            # Random health and energy
             health = random.randint(3, 9)
             energy = random.randint(2, 6)
-            assigned_general = random.choices(assigned_generals, assigned_general_probabilities)[0]
-            success_percentage = round(sum([random.uniform(0, 0.35), math.log10(health)-0.80]), 2)
+
+            # Select a general and its probability
+            general_index = random.choices(range(len(assigned_generals)), assigned_general_probabilities, k=1)[0]
+            general = assigned_generals[general_index]
+            general_probability = assigned_general_probabilities[general_index]
+
+            # Calculated the success percentage.
+            success_percentage = round(sum([clone_type_probability, rank_probability, general_probability]), 2)
             check_in_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            data.append((clone_type, rank, assigned_weapon, health, energy, success_percentage, assigned_general, check_in_time))
+            data.append((clone_type, rank, assigned_weapon, health, energy, success_percentage, general, check_in_time))
         return data
     
 class TestDatabase(unittest.TestCase):
