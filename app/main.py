@@ -43,7 +43,7 @@ def view():
     if SPRINT < 2:
         return render_template("view.html")
     db = Database()
-    options = ["Level", "Health", "Energy", "Sanity", "Rarity"]
+    options = ["clone_type", "rank""health", "assigned_general", "success_percentage"]
     x_axis = request.values.get("x_axis") or options[1]
     y_axis = request.values.get("y_axis") or options[2]
     target = request.values.get("target") or options[4]

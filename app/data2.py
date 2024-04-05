@@ -76,7 +76,7 @@ class Database:
         for row in data:
             self.cur.execute("""
                 INSERT INTO clone_troopers (clone_type, rank, assigned_weapon, health, energy, success_percentage, assigned_general, check_in_time)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES ( %s, %s, %s, %s, %s, %s, %s, %s)
             """, row)
         self.conn.commit()
     
@@ -96,7 +96,7 @@ class Database:
         return pd.DataFrame(rows, columns=columns)
 
     def html_table(self) -> str:
-        df = self.to_dataframe()
+        df = self.dataframe()
         return df.to_html()
 
     # Generate a random clone trooper!
@@ -117,7 +117,7 @@ class Database:
     
 class TestDatabase(unittest.TestCase):
     def setUp(self):
-        self.db = Database()  # Adjust this to match your setup
+        self.db = Database()
 
     def test_connection(self):
         self.assertIsNotNone(self.db.conn)
@@ -142,7 +142,7 @@ class TestDatabase(unittest.TestCase):
         self.db.reset()
         self.db.seed(5)
         df = self.db.dataframe()
-        self.assertIsInstance(df, DataFrame)
+        self.assertIsInstance(df, pd.DataFrame)
         self.assertEqual(len(df), 5)
 
     def test_html_table(self):
@@ -154,7 +154,7 @@ class TestDatabase(unittest.TestCase):
 
         self.db.reset()
         html = self.db.html_table()
-        self.assertIsNone(html)
+        self.assertTrue('<tbody>\n  </tbody>' in html)  # Check if the table body is empty
 
 if __name__ == '__main__':
     unittest.main()

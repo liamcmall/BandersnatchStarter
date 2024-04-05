@@ -79,7 +79,6 @@ class Database:
     def generate_clone_trooper(n):
         data = []
         for _ in range(n):
-            clone_trooper_name = f"CT-{random.randint(0, 999999):06}"
 
             # Select a clone type and its probability
             clone_type_index = random.choices(range(len(clone_types)), clone_type_probabilities, k=1)[0]
@@ -103,7 +102,7 @@ class Database:
             general = assigned_general[general_index]
             general_probability = assigned_general_probabilities[general_index]
 
-            # Calculated the success percentage. But also included a skew towards healthier clones
+            # Calculated the success percentage. But also included a skew towards healthier clones.
             success_percentage = round(sum([clone_type_probability, rank_probability, general_probability,math.log10(health)-0.80]), 2)
 
             data.append({
