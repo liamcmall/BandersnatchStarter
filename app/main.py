@@ -5,12 +5,13 @@ from MonsterLab import Monster
 from flask import Flask, render_template, request
 from pandas import DataFrame
 from datetime import datetime
+import plotly.io as pio
 
 from app.data2 import Database
 from app.graph import chart
 from app.machine import Machine
 
-SPRINT = 1
+SPRINT = 2
 APP = Flask(__name__)
 
 
@@ -38,12 +39,36 @@ def data():
     )
 
 
+# @APP.route("/view", methods=["GET", "POST"])
+# def view():
+#     if SPRINT < 2:
+#         return render_template("view.html")
+#     db = Database()
+#     options = ["clone_type", "rank","health", "assigned_general", "success_percentage"]
+#     x_axis = request.values.get("x_axis") or options[1]
+#     y_axis = request.values.get("y_axis") or options[2]
+#     target = request.values.get("target") or options[4]
+#     graph = chart(
+#         df=db.dataframe(),
+#         x=x_axis,
+#         y=y_axis,
+#         target=target,
+#     ).to_json()
+#     return render_template(
+#         "view.html",
+#         options=options,
+#         x_axis=x_axis,
+#         y_axis=y_axis,
+#         target=target,
+#         count=db.count(),
+#         graph=graph,
+#     )
 @APP.route("/view", methods=["GET", "POST"])
 def view():
     if SPRINT < 2:
         return render_template("view.html")
     db = Database()
-    options = ["clone_type", "rank""health", "assigned_general", "success_percentage"]
+    options = ["clone_type", "rank","health", "assigned_general", "success_percentage"]
     x_axis = request.values.get("x_axis") or options[1]
     y_axis = request.values.get("y_axis") or options[2]
     target = request.values.get("target") or options[4]
@@ -52,7 +77,8 @@ def view():
         x=x_axis,
         y=y_axis,
         target=target,
-    ).to_json()
+    )
+    graph_html = pio.to_html(graph, full_html=False)
     return render_template(
         "view.html",
         options=options,
@@ -60,8 +86,9 @@ def view():
         y_axis=y_axis,
         target=target,
         count=db.count(),
-        graph=graph,
+        graph=graph_html,
     )
+
 
 
 @APP.route("/model", methods=["GET", "POST"])
