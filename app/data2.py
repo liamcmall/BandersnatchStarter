@@ -98,23 +98,49 @@ class Database:
         return df.to_html()
 
     @staticmethod
-    def generate_clone_trooper(n: int) -> List[Tuple]:
-        """Generate data for 'n' clone troopers."""
+    def generate_clone_trooper(n):
+        """
+        Generates a list of clone troopers with attributes based on 
+        predefined probabilities.
+
+        Parameters:
+        n (int): Number of clone troopers to generate.
+
+        Returns:
+        list: A list of tuples, each representing the attributes of a clone trooper.
+        """
         data = []
         for _ in range(n):
-            clone_type_index = random.choices(range(len(CLONE_TYPES)), CLONE_TYPE_PROBABILITIES, k=1)[0]
+            clone_type_index = random.choices(
+                range(len(CLONE_TYPES)), CLONE_TYPE_PROBABILITIES, k=1)[0]
             clone_type = CLONE_TYPES[clone_type_index]
-            rank_index = random.choices(range(len(RANKS)), RANK_PROBABILITIES, k=1)[0]
+            clone_type_probability = CLONE_TYPE_PROBABILITIES[clone_type_index]
+
+            rank_index = random.choices(
+                range(len(RANKS)), RANK_PROBABILITIES, k=1)[0]
             rank = RANKS[rank_index]
+            rank_probability = RANK_PROBABILITIES[rank_index]
+
             assigned_weapon = random.choice(ASSIGNED_WEAPONS)
+
             health = random.randint(3, 9)
             energy = random.randint(2, 6)
-            general_index = random.choices(range(len(ASSIGNED_GENERALS)), ASSIGNED_GENERAL_PROBABILITIES, k=1)[0]
+
+            general_index = random.choices(
+                range(len(ASSIGNED_GENERALS)), ASSIGNED_GENERAL_PROBABILITIES, k=1)[0]
             general = ASSIGNED_GENERALS[general_index]
-            success_percentage = round(random.uniform(0.1, 0.3), 2)  # Example percentage calculation.
+            general_probability = ASSIGNED_GENERAL_PROBABILITIES[general_index]
+
+            success_percentage = round(sum([clone_type_probability, rank_probability, 
+                                            general_probability]), 2)
+            if success_percentage >= 1.0:
+                success_percentage = 0.99
+
             check_in_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            data.append((clone_type, rank, assigned_weapon, health, energy, success_percentage, general, check_in_time))
+            data.append((clone_type, rank, assigned_weapon, health, energy, 
+                         success_percentage, general, check_in_time))
         return data
+
 
 class TestDatabase(unittest.TestCase):
     """Unit tests for the Database class."""
@@ -157,7 +183,7 @@ class TestDatabase(unittest.TestCase):
 
         self.db.reset()
         html = self.db.html_table()
-        self.assertTrue('<tbody>\n  </tbody>' in html)  # Check if the table body is empty
+        self.assertTrue('<tbody>\n  </tbody>' in html)
 
 if __name__ == '__main__':
     unittest.main()

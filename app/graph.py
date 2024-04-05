@@ -10,17 +10,25 @@ import plotly.express as px
 import plotly.io as pio
 
 # Local application imports
-from data2 import Database
-
-# Create database instance and dataframe
-db = Database()
-df = db.dataframe()
+from app.data2 import Database
 
 def chart(df, x, y, target):
-    """Generate a box plot for the given dataframe and axes."""
+    """
+    Generate a box plot for the given dataframe and axes.
+
+    Parameters:
+    df (pandas.DataFrame): The dataframe to plot.
+    x (str): The column name to use for the x-axis.
+    y (str): The column name to use for the y-axis.
+    target (str): The title of the plot.
+
+    Returns:
+    plotly Figure: The figure object of the plot.
+    """
     fig = px.box(df, x=x, y=y, title=target)
     fig.update_layout(template='plotly_dark', autosize=True)
     return fig
+
 
 class TestChart(unittest.TestCase):
     """Unit tests for the chart function."""

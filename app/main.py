@@ -78,7 +78,7 @@ def view():
         y=y_axis,
         target=target,
     )
-    graph_html = pio.to_html(graph, full_html=False)
+    graph_html = pio.to_html(graph, full_html=False, config={'responsive': True})
     return render_template(
         "view.html",
         options=options,
