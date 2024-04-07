@@ -6,7 +6,7 @@ from flask import Flask, render_template, request
 from pandas import DataFrame
 from datetime import datetime
 import plotly.io as pio
-
+import pandas as pd
 from app.data2 import Database
 from app.graph import chart
 from app.machine import Machine
@@ -71,32 +71,28 @@ def model():
     if SPRINT < 3:
         return render_template("model.html")
     db = Database()
-    options = ["Level", "Health", "Energy", "Sanity", "Rarity"]
+    options = ["clone_type", "rank", "assigned_general"]  # Adjusted options
     filepath = os.path.join("app", "model.joblib")
     if not os.path.exists(filepath):
         df = db.dataframe()
-        machine = Machine(df[options])
+        machine = Machine(df)
         machine.save(filepath)
     else:
         machine = Machine.open(filepath)
-    stats = [round(random_float(1, 250), 2) for _ in range(3)]
-    level = request.values.get("level", type=int) or random_int(1, 20)
-    health = request.values.get("health", type=float) or stats.pop()
-    energy = request.values.get("energy", type=float) or stats.pop()
-    sanity = request.values.get("sanity", type=float) or stats.pop()
-    prediction, confidence = machine(DataFrame(
-        [dict(zip(options, (level, health, energy, sanity)))]
+    clone_type = request.values.get("clone_type")  # Get clone type from request
+    rank = request.values.get("rank")  # Get rank from request
+    assigned_general = request.values.get("assigned_general")  # Get assigned general from request
+    prediction = machine(pd.DataFrame(
+        [dict(zip(options, (clone_type, rank, assigned_general)))]
     ))
     info = machine.info()
     return render_template(
         "model.html",
         info=info,
-        level=level,
-        health=health,
-        energy=energy,
-        sanity=sanity,
+        clone_type=clone_type,
+        rank=rank,
+        assigned_general=assigned_general,
         prediction=prediction,
-        confidence=f"{confidence:.2%}",
     )
 
 

@@ -1,13 +1,14 @@
+import joblib
 from sklearn.metrics import mean_squared_error, r2_score
 import unittest
-import pandas as pd
 import os
+import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder
-from data2 import Database
+from app.data2 import Database
 from datetime import datetime
 
 db = Database()
@@ -25,7 +26,7 @@ class Machine:
         # Setup preprocessing pipeline
         preprocessor = ColumnTransformer(
             transformers=[
-                ('cat', OneHotEncoder(), [0, 1, 2])  # Transform categorical features
+                ('cat', OneHotEncoder(handle_unknown='ignore'), [0, 1, 2])  # Transform categorical features
             ],
             remainder='passthrough'
         )
@@ -44,7 +45,7 @@ class Machine:
             'regressor__fit_intercept': [True, False]
         }
 
-        clf = GridSearchCV(pipeline, params, cv=3, scoring='neg_mean_squared_error')
+        clf = GridSearchCV(pipeline, params, cv=2, scoring='neg_mean_squared_error')
         clf.fit(X_train, y_train)
         best_model = clf.best_estimator_
         print(f"Best parameters for Linear Regression: {clf.best_params_}")
@@ -65,6 +66,7 @@ class Machine:
     def __init__(self, df):
         X_train, X_test, y_train, y_test, preprocessor = self.preprocess_data(df)
         self.model = self.train_and_tune(X_train, y_train, preprocessor)
+        self.df = df
         self.model_info = self.evaluate_model(self.model, X_test, y_test)
         self.timestamp = datetime.now()
 
@@ -72,9 +74,7 @@ class Machine:
         """Take in a DataFrame of feature data and return a prediction."""
         prediction = self.model.predict(feature_basis)
         return prediction
-    
 
-    
     def save(self, filepath):
         """Save the machine learning model to the specified filepath using joblib."""
         joblib.dump(self.model, filepath)
@@ -82,11 +82,18 @@ class Machine:
     @classmethod
     def open(cls, filepath):
         """Load a saved machine learning model from the specified filepath using joblib."""
-        model = joblib.load(filepath)
-        machine = cls.__new__(cls)
-        machine.model = model
-        return machine
-    
+        try:
+            model = joblib.load(filepath)
+            machine = cls.__new__(cls)
+            machine.model = model
+            machine.timestamp = datetime.now()  # Add this line to set the timestamp attribute
+            return machine
+        except FileNotFoundError:
+            print(f"Error: No model found at {filepath}")
+            return None
+        
+
+
     def info(self):
         """Return a string with the name of the base model and the timestamp of when it was initialized."""
         base_model_name = type(self.model.named_steps['regressor']).__name__
@@ -94,18 +101,16 @@ class Machine:
         return info_string
 
 
-
 class TestMachine(unittest.TestCase):
-
     def setUp(self):
         self.df = pd.DataFrame({
-            'clone_type': ['type1', 'type2', 'type3', 'type4', 'type5', 'type6'],
-            'rank': ['rank1', 'rank2', 'rank3', 'rank4', 'rank5', 'rank6'],
-            'assigned_general': ['general1', 'general2', 'general3', 'general4', 'general5', 'general6'],
-            'success_percentage': [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+            'clone_type': ['Commando', 'ARC Trooper', 'Recon', 'Standard'],
+            'rank': ['Commander', 'Captain', 'Lieutenant', 'Private'],
+            'assigned_general': ['General Kenobi', 'General Mace Windu', 'General Yoda', 'General Skywalker'],
+            'success_percentage': [0.1, 0.2, 0.3, 0.4]
         })
         self.machine = Machine(self.df)  # Pass the DataFrame to the Machine class
-    
+
     def test_preprocess_data(self):
         X_train, X_test, y_train, y_test, preprocessor = self.machine.preprocess_data(self.df)
         self.assertEqual(X_train.shape[1], 3)  # Check if the number of features is correct

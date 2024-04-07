@@ -1,34 +1,29 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Bandersnatch Model</h1>
+    <h1>Clone Trooper Prediction Model</h1>
     <p>{{ info | safe }}</p>
 
-    <h2>Prediction Basis</h2>
+    <h2>Prediction</h2>
     <form id="form" method="post" action="{{ url_for('model') }}">
         <p><label>
-            Level: <input name="level" value="{{ level }}"/>
+            Clone Type: <input name="clone_type" value="{{ clone_type }}"/>
         </label></p>
         <br class="clear">
         <p><label>
-            Health: <input name="health" value="{{ health }}"/>
+            Rank: <input name="rank" value="{{ rank }}"/>
         </label></p>
         <br class="clear">
         <p><label>
-            Energy: <input name="energy" value="{{ energy }}"/>
+            Assigned General: <input name="assigned_general" value="{{ assigned_general }}"/>
         </label></p>
         <br class="clear">
-        <p><label>
-            Sanity: <input name="sanity" value="{{ sanity }}"/>
-        </label></p>
         <br class="clear">
-        <button type="submit">Predict Rarity</button>
+        <button type="submit">Predict Success Percentage</button>
         <br class="clear">
     </form>
 
     <h3>
         Prediction: {{ prediction }}
-        <br>
-        Confidence: {{ confidence }}
     </h3>
 
 {% endblock %}
